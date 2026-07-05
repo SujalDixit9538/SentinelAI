@@ -1,0 +1,12 @@
+# Security: Prevent secrets from being uploaded
+.env
+
+# Python specific ignores
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
