@@ -4,6 +4,5 @@ scikit-learn
 joblib
 gradio
 ibm-watsonx-ai
-ibm-boto3
 ibm-botocore
 python-dotenv
