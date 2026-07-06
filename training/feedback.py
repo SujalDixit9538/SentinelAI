@@ -5,8 +5,8 @@ Integrates human-in-the-loop validation actions back into the live ML pipeline w
 
 import pandas as pd
 import numpy as np
-from SentinelAI.preprocessing.preprocessor import NIDSPreprocessor
-from SentinelAI.training.model import NIDSClassifier
+from preprocessing.preprocessor import NIDSPreprocessor
+from training.model import NIDSClassifier
 
 class FeedbackManager:
     """Manages structural runtime adjustments based on analyst overriding labels."""
