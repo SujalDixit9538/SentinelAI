@@ -8,10 +8,10 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from SentinelAI.preprocessing.preprocessor import NIDSPreprocessor
-from SentinelAI.training.model import NIDSClassifier
-from SentinelAI.explainability.explainer import ThreatExplainer
-from SentinelAI.training.feedback import FeedbackManager
+from preprocessing.preprocessor import NIDSPreprocessor
+from training.model import NIDSClassifier
+from explainability.explainer import ThreatExplainer
+from training.feedback import FeedbackManager
 
 # Page Config
 st.set_page_config(page_title="SentinelAI NIDS", layout="wide")
@@ -20,8 +20,8 @@ st.title("🛡️ SentinelAI: Network Intrusion Detection System")
 # Load Components 
 @st.cache_resource
 def load_system():
-    prep = NIDSPreprocessor.load('SentinelAI/models/preprocessor.pkl')
-    mod = NIDSClassifier.load('SentinelAI/models/nids_model.pkl')
+    prep = NIDSPreprocessor.load('models/preprocessor.pkl')
+    mod = NIDSClassifier.load('models/nids_model.pkl')
     exp = ThreatExplainer(mod, prep)
     fb = FeedbackManager(mod, prep)
     data = pd.read_csv('/content/Train_data.csv')
