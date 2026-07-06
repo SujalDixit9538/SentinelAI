@@ -1,54 +1,64 @@
-"""
-SentinelAI watsonx.ai Integration Middleware.
-Translates mathematical telemetry arrays into high-level descriptive mitigation guides.
-"""
-
-from ibm_watsonx_ai.foundation_models import Model
-from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
+"""SentinelAI watsonx Orchestrate Integration Middleware."""
+import os
+import requests
 
 class WatsonReporter:
-    """Serverless client wrapper interfacing directly with remote IBM generative foundation models."""
+    """Serverless client wrapper interfacing directly with IBM watsonx Orchestrate Agents."""
     
     def __init__(self, api_key: str, project_id: str):
-        self.credentials = {
-            "url": "https://us-south.ml.cloud.ibm.com",
-            "apikey": api_key
-        }
-        self.project_id = project_id
-        self.parameters = {
-            GenParams.DECODING_METHOD: "greedy",
-            GenParams.MAX_NEW_TOKENS: 150,
-            GenParams.MIN_NEW_TOKENS: 10,
-            GenParams.TEMPERATURE: 0.5,
-        }
-        self.model_id = "ibm/granite-13b-chat-v2"
-        self.is_connected = False
-        
-        if api_key and project_id:
-            try:
-                self.model = Model(
-                    model_id=self.model_id, 
-                    params=self.parameters,
-                    credentials=self.credentials,
-                    project_id=self.project_id
-                )
-                self.is_connected = True
-            except Exception:
-                self.is_connected = False
+        # Dynamically pulls credentials from environment secrets
+        self.api_key = api_key or os.getenv("IBM_API_KEY")
+        self.agent_id = os.getenv("WATSONX_AGENT_ID") 
+        self.service_url = os.getenv("WATSONX_SERVICE_URL")
+        self.is_connected = True if self.api_key else False
+
+    def get_iam_token(self):
+        """Exchanges the IBM Cloud API key for a temporary bearer token."""
+        url = "https://iam.cloud.ibm.com/identity/token"
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        data = f"grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey={self.api_key}"
+        response = requests.post(url, headers=headers, data=data)
+        response.raise_for_status()
+        return response.json().get("access_token")
 
     def generate_mitigation_report(self, math_explanations: list[dict]) -> str:
-        """Submits parsed mathematical feature violations to IBM Granite for context enrichment."""
+        """Submits parsed telemetry to the deployed watsonx Orchestrate SOC Agent."""
         if not self.is_connected:
             return "Watsonx service unavailable. Operating in local-only monitoring mode."
-            
+
         anomalies_text = ", ".join([f"{e['feature']} (value: {e['value']})" for e in math_explanations])
-        prompt = (
-            f"System: You are a Senior SOC Analyst. Given these network anomalies, write a brief "
-            f"2-3 sentence mitigation report detailing the likely vector and immediate host defenses.\n"
-            f"Anomalies: {anomalies_text}\n\nSOC Mitigation Report:"
-        )
+        prompt = f"Anomalies: {anomalies_text}"
 
         try:
-            return self.model.generate_text(prompt).strip()
+            token = self.get_iam_token()
+            
+            url = f"{self.service_url}/v1/orchestrate/{self.agent_id}/chat/completions"
+            
+            headers = {
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json"
+            }
+            
+            payload = {
+                "stream": False,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            }
+
+            response = requests.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+            
+            result = response.json()
+            text_response = result.get("choices", [{}])[0].get("message", {}).get("content", "No response generated.")
+            
+            # Remove Markdown asterisks to enforce clean plain text in the UI
+            return text_response.replace("**", "").replace("*", "")
+
+        except requests.exceptions.RequestException as e:
+            return f"Network or API Error executing request: {str(e)}"
         except Exception as e:
-            return f"Error executing cloud generation runtime request: {str(e)}"
+            return f"Error executing Agent API request: {str(e)}"
