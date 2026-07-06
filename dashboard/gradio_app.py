@@ -16,11 +16,11 @@ if project_root not in sys.path:
 # Load variables from the hidden .env file securely
 load_dotenv(find_dotenv())
 
-from SentinelAI.preprocessing.preprocessor import NIDSPreprocessor
-from SentinelAI.training.model import NIDSClassifier
-from SentinelAI.explainability.explainer import ThreatExplainer
-from SentinelAI.explainability.watson_reporter import WatsonReporter
-from SentinelAI.training.feedback import FeedbackManager
+from preprocessing.preprocessor import NIDSPreprocessor
+from training.model import NIDSClassifier
+from explainability.explainer import ThreatExplainer
+from explainability.watson_reporter import WatsonReporter
+from training.feedback import FeedbackManager
 
 # --- Runtime Dependency Injection ---
 prep = NIDSPreprocessor.load('models/preprocessor.pkl')
