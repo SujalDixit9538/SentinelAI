@@ -23,8 +23,8 @@ from SentinelAI.explainability.watson_reporter import WatsonReporter
 from SentinelAI.training.feedback import FeedbackManager
 
 # --- Runtime Dependency Injection ---
-prep = NIDSPreprocessor.load('SentinelAI/models/preprocessor.pkl')
-mod = NIDSClassifier.load('SentinelAI/models/nids_model.pkl')
+prep = NIDSPreprocessor.load('models/preprocessor.pkl')
+mod = NIDSClassifier.load('models/nids_model.pkl')
 exp = ThreatExplainer(mod, prep)
 fb = FeedbackManager(mod, prep)
 
