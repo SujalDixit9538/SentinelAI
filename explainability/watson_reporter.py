@@ -59,6 +59,6 @@ class WatsonReporter:
             return text_response.replace("**", "").replace("*", "")
 
         except requests.exceptions.RequestException as e:
-            return f"Network or API Error executing request: {str(e)}"
+            return "Watsonx service currently unavailable. Dashboard operating in local threat assessment mode."
         except Exception as e:
-            return f"Error executing Agent API request: {str(e)}"
+            return "Watsonx service currently unavailable. Dashboard operating in local threat assessment mode."
