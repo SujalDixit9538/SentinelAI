@@ -1,3 +1,13 @@
+---
+title: SentinelAI SOC Dashboard
+emoji: 🛡️
+colorFrom: gray
+colorTo: red
+sdk: gradio
+app_file: app.py
+pinned: false
+---
+
 # 🛡️ SentinelAI: Hybrid Network Intrusion Detection System
 
 ## 📌 Project Overview
