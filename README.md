@@ -7,6 +7,9 @@ sdk: gradio
 app_file: app.py
 pinned: false
 ---
+# SentinelAI
+Network Intrusion Detection System with watsonx.ai integration.
+
 
 # 🛡️ SentinelAI: Hybrid Network Intrusion Detection System
 
