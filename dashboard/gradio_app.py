@@ -35,7 +35,16 @@ watson = WatsonReporter(
 )
 
 # Load blind test dataset for real-time simulation
-df = pd.read_csv('Test_data.csv')
+# Check the root directory first, then fallback to the dashboard folder
+csv_path = os.path.join(project_root, 'Test_data.csv')
+if not os.path.exists(csv_path):
+    csv_path = os.path.join(os.path.dirname(__file__), 'Test_data.csv')
+
+# Load blind test dataset safely
+if os.path.exists(csv_path):
+    df = pd.read_csv(csv_path)
+else:
+    raise FileNotFoundError(f"Critical Error: 'Test_data.csv' could not be found in root or dashboard folder! Please verify it is uploaded to GitHub.")
 
 def analyze_packet(current_idx: int) -> tuple:
     """Automated threat parsing via looping over historical test packets."""
