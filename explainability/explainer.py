@@ -4,8 +4,8 @@ Extracts decision logic weights via mathematical coefficients directly from the 
 """
 
 import numpy as np
-from SentinelAI.preprocessing.preprocessor import NIDSPreprocessor
-from SentinelAI.training.model import NIDSClassifier
+from preprocessing.preprocessor import NIDSPreprocessor
+from training.model import NIDSClassifier
 
 class ThreatExplainer:
     """High-speed mathematical interpreter designed for millisecond streaming packet auditing."""
